@@ -1,0 +1,30 @@
+{% extends 'bases/base.html' %}
+
+{% load static %}
+{% load i18n %}
+{% block head %}
+
+{% endblock %}
+{% block title %}
+Index
+{% endblock title %}
+{% block breadcrumb %}
+
+{% endblock %}
+{% block container %}
+<div class="card-header">
+    {% if user.is_authenticated %}
+    <div class="row">
+        <div class="col"><h2></h2></div>
+        <div class="ml-md-auto">
+            <a class="btn btn-info" href="{% url 'logout' %}" role="button"><i class="fas fa-sign-out-alt"></i>{% trans "logout" %} ({{ user.username }})</a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+<div class="row justify-content-center align-items-center" style="height:500px">
+    <div class="col" style="text-align:center">
+        
+    </div>
+</div>
+{% endblock %}
