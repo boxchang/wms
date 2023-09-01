@@ -283,7 +283,8 @@ def unit_sync(request):
                 unit.save()
             except:  # 更新
                 unit = Unit(orgId=row.orgId, unitId=row.unitId, unitName=row.unitName, isValid=row.isValid)
-                unit.manager = CustomUser.objects.get(emp_no=row.managerId)
+                #unit.manager = CustomUser.objects.get(emp_no=row.managerId)
+                unit.manager = CustomUser.objects.get(emp_no='111045')  # 開帳使用，開帳完再至使用者列表同步組織，就會修正主管
                 unit.create_by = request.user
                 unit.update_by = request.user
                 unit.save()

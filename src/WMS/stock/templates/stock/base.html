@@ -16,6 +16,9 @@ Excel
 <div class="card-header">
     <div class="row">
         <div class="col">
+            <a href="javascript:history.back()" class="btn btn-info"><i class="fas fa-arrow-left fa-1x"></i></a>&nbsp;
+            <a href="{% url 'wo_import' %}" class="btn btn-info">工單匯入</a>
+            <a href="{% url 'wo_search' %}" class="btn btn-info">工單查詢</a>
             {% if user.is_authenticated %}
                 <a href="{% url 'stock_search' %}" class="btn btn-info">儲位叫車</a>
                 <a href="{% url 'stock_import' %}" class="btn btn-info">主檔匯入</a>

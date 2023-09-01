@@ -56,7 +56,7 @@
                     <td class="text-center text-nowrap">{{ location.storage }}</td>
                     <td class="text-center text-nowrap">{{ location.location_code }}</td>
                     <td class="text-center text-nowrap">{{ location.desc|default:'' }}</td>
-                    <td class="text-center text-nowrap"><button type='button' class='btn btn-info' onclick="bin('')">選擇</button></td>
+                    <td class="text-center text-nowrap"><a href="{% url 'bin_list' location.storage.pk location.pk %}" class='btn btn-info'>選擇</a></td>
                     <td class="text-center text-nowrap"><button type='button' class='btn btn-info' onclick="call('{{ location.storage.storage_code }}','{{ location.mach_location_code }}','{{ location.storage.lift }}','{{ location.storage.access_point }}')">叫車</button></td>
                 </tr>
                 {% endfor %}

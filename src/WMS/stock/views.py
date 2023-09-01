@@ -5,8 +5,65 @@ from django.views.decorators.csrf import csrf_exempt
 from suds import client
 from django.http import JsonResponse
 from WMS.settings.base import HANEL_WS
-from stock.models import Storage_Type, Storage, Location, Bin
+from stock.forms import SearchForm
+from stock.models import Storage_Type, Storage, Location, Bin, Item, WO
 
+
+@login_required
+def wo_search(request):
+    if request.method == 'POST':
+        wo_no = request.POST.get('wo_no')
+        items = WO.objects.filter(wo_no=wo_no).all()
+    search_form = SearchForm()
+    return render(request, 'stock/wo_search.html', locals())
+
+
+@login_required
+def wo_import(request):
+    if request.method == 'POST':
+        excel_file = request.FILES.get('files1')
+        wo_tmp = ""
+        if excel_file:
+            wb = openpyxl.load_workbook(excel_file)
+            sheet = wb.worksheets[0]
+            for iRow in range(2, sheet.max_row + 1):
+                try:
+                    wo_no = sheet.cell(row=iRow, column=1).value
+                    wo = WO.objects.filter(wo_no=wo_no)
+                    if wo and wo_tmp != wo_no:
+                        wo.delete()
+                        wo_tmp = wo_no
+
+                    item_code = str(sheet.cell(row=iRow, column=2).value)
+                    item = Item.objects.get(item_code=item_code)
+                    qty = sheet.cell(row=iRow, column=3).value
+                    wo = WO.objects.create(wo_no=wo_no, item=item, qty=qty, update_by=request.user)
+                    wo.save()
+                except Exception as e:
+                    print(e)
+
+    return render(request, 'stock/wo_import.html', locals())
+
+
+@login_required
+def item_import(request):
+    if request.method == 'POST':
+        excel_file = request.FILES.get('files1')
+        if excel_file:
+            wb = openpyxl.load_workbook(excel_file)
+            sheet = wb.worksheets[0]
+            for iRow in range(2, sheet.max_row + 1):
+                try:
+                    item_code = str(sheet.cell(row=iRow, column=1).value)
+                    if len(item_code) == 9:
+                        desc = sheet.cell(row=iRow, column=2).value
+                        bin = sheet.cell(row=iRow, column=7).value
+                        bin = Bin.objects.get(bin_code=bin)
+                        item = Item.objects.update_or_create(item_code=item_code, defaults={'desc': desc, 'bin': bin, 'update_by': request.user})
+                except Exception as e:
+                    print(e)
+
+    return render(request, 'stock/import.html', locals())
 
 @login_required
 def excel_import(request):
@@ -82,6 +139,12 @@ def location_list(request):
     return render(request, 'stock/location.html', locals())
 
 
+@login_required
+def bin_list(request, storage, location):
+    bins = Bin.objects.filter(location=location).all()
+    return render(request, 'stock/bin.html', locals())
+
+
 @csrf_exempt
 def call_location(request):
     if request.method == 'POST':
@@ -98,6 +161,24 @@ def call_location(request):
             params.shelf = location  # 01;02;03
             params.job = '1000727161'
             res = web_s.service.sendJobBufferV02(params)
+            result = "DONE"
+        except Exception as e:
+            result = "ERROR"
+
+    return JsonResponse(result, safe=False)
+
+
+@csrf_exempt
+def call_wo_item_check(request):
+    if request.method == 'POST':
+        try:
+            wo_no = request.POST.get('wo_no')
+            item_code = request.POST.get('item_code')
+            item_checked = request.POST.get('item_checked')
+            item = Item.objects.get(item_code=item_code)
+            wo_item = WO.objects.filter(wo_no=wo_no, item=item).first()
+            wo_item.checked = bool(item_checked)
+            wo_item.save()
             result = "DONE"
         except Exception as e:
             result = "ERROR"

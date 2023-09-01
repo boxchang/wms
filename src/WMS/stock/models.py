@@ -7,7 +7,7 @@ class Storage_Type(models.Model):
     type_name = models.CharField(max_length=50, blank=False, null=False)
     update_at = models.DateTimeField(auto_now=True, null=True)
     update_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING,
-                                  related_name='storage_type_create_by')
+                                  related_name='storage_type_update_by')
 
     def __str__(self):
         return self.type_name
@@ -22,7 +22,7 @@ class Storage(models.Model):
     access_point = models.CharField(max_length=1, blank=True, null=True)
     update_at = models.DateTimeField(auto_now=True, null=True)
     update_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING,
-                                  related_name='storage_create_by')
+                                  related_name='storage_update_by')
     enable = models.CharField(max_length=1, blank=True, null=True)
 
     def __str__(self):
@@ -39,7 +39,7 @@ class Location(models.Model):
     enable = models.CharField(max_length=1, blank=True, null=True)
     update_at = models.DateTimeField(auto_now=True, null=True)
     update_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING,
-                                  related_name='location_create_by')
+                                  related_name='location_update_by')
 
     def __str__(self):
         return self.desc
@@ -52,7 +52,32 @@ class Bin(models.Model):
     enable = models.CharField(max_length=1, blank=True, null=True)
     update_at = models.DateTimeField(auto_now=True, null=True)
     update_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING,
-                                  related_name='bin_create_by')
+                                  related_name='bin_update_by')
 
     def __str__(self):
         return self.desc
+
+
+class Item(models.Model):
+    item_code = models.CharField(max_length=10, primary_key=True)
+    desc = models.CharField(max_length=200, blank=True, null=True)
+    bin = models.ForeignKey(Bin, related_name='item_bin', on_delete=models.DO_NOTHING)
+    update_at = models.DateTimeField(auto_now=True, null=True)
+    update_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING,
+                                  related_name='item_update_by')
+
+    def __str__(self):
+        return self.desc
+
+
+class WO(models.Model):
+    wo_no = models.CharField(max_length=10, blank=False, null=False)
+    item = models.ForeignKey(Item, related_name='wo_item', on_delete=models.DO_NOTHING)
+    qty = models.IntegerField(default=0)
+    checked = models.BooleanField(default=False)
+    update_at = models.DateTimeField(auto_now=True, null=True)
+    update_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING,
+                                  related_name='wo_update_by')
+
+    def __str__(self):
+        return self.wo_no
