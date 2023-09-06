@@ -55,7 +55,7 @@ def item_import(request):
             for iRow in range(2, sheet.max_row + 1):
                 try:
                     item_code = str(sheet.cell(row=iRow, column=1).value)
-                    if len(item_code) == 9:
+                    if len(item_code) == 10:
                         desc = sheet.cell(row=iRow, column=2).value
                         bin = sheet.cell(row=iRow, column=7).value
                         bin = Bin.objects.get(bin_code=bin)
