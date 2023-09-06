@@ -22,7 +22,7 @@ def wo_search(request):
 def wo_import(request):
     if request.method == 'POST':
         excel_file = request.FILES.get('files1')
-        wo_tmp = ""
+        wo_del_list = []
         if excel_file:
             wb = openpyxl.load_workbook(excel_file)
             sheet = wb.worksheets[0]
@@ -30,9 +30,9 @@ def wo_import(request):
                 try:
                     wo_no = sheet.cell(row=iRow, column=1).value
                     wo = WO.objects.filter(wo_no=wo_no)
-                    if wo and wo_tmp != wo_no:
+                    if wo and wo_no not in wo_del_list:
                         wo.delete()
-                        wo_tmp = wo_no
+                        wo_del_list.append(wo_no)
 
                     item_code = str(sheet.cell(row=iRow, column=2).value)
                     item = Item.objects.get(item_code=item_code)
