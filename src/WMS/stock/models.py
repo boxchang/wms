@@ -84,7 +84,11 @@ class Item(models.Model):
 
 class WO(models.Model):
     wo_no = models.CharField(max_length=10, blank=False, null=False)
-    item = models.ForeignKey(Item, related_name='wo_item', on_delete=models.DO_NOTHING)
+    item_code = models.CharField(max_length=10)
+    desc = models.CharField(max_length=200, blank=True, null=True)
+    bin = models.ForeignKey(Bin, related_name='wo_bin', on_delete=models.DO_NOTHING)
+    location = models.ForeignKey(Location, related_name='wo_location', on_delete=models.DO_NOTHING)
+    storage = models.ForeignKey(Storage, related_name='wo_storage', on_delete=models.DO_NOTHING)
     qty = models.IntegerField(default=0)
     checked = models.BooleanField(default=False)
     update_at = models.DateTimeField(auto_now=True, null=True)

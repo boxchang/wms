@@ -82,16 +82,16 @@
             <tbody>
                 {% for wo_item in items %}
                 <tr class="data-row">
-                    <td><input type="checkbox" id="check_{{ wo_item.item.item_code }}" data-toggle="toggle" data-on="領" data-off="待" data-onstyle="primary" data-offstyle="light" onchange="item_check('{{ wo_item.wo_no }}','{{ wo_item.item.item_code }}')" {% if wo_item.checked %}checked{% else %}''{% endif %}></td>
+                    <td><input type="checkbox" id="check_{{ wo_item.item_code }}" data-toggle="toggle" data-on="領" data-off="待" data-onstyle="primary" data-offstyle="light" onchange="item_check('{{ wo_item.wo_no }}','{{ wo_item.item_code }}')" {% if wo_item.checked %}checked{% else %}''{% endif %}></td>
                     <td class="text-center text-nowrap">
-                        <a href="#" class="btn btn-light" data-toggle="modal" data-target=".bd-example-modal-lg" onclick="info('{{ wo_item.item.item_code }}', '{{ wo_item.item.desc }}')">{{ wo_item.item.item_code }}</a>
+                        <a href="#" class="btn btn-light" data-toggle="modal" data-target=".bd-example-modal-lg" onclick="info('{{ wo_item.item_code }}', '{{ wo_item.desc }}')">{{ wo_item.item_code }}</a>
                     </td>
-                    <td class="text-center text-nowrap">{{ wo_item.item.desc }}</td>
+                    <td class="text-center text-nowrap">{{ wo_item.desc }}</td>
                     <td class="text-center text-nowrap">{{ wo_item.qty }}</td>
-                    <td class="text-center text-nowrap">{{ wo_item.item.bin.bin_name }}</td>
+                    <td class="text-center text-nowrap">{{ wo_item.bin.bin_name }}</td>
                     <td class="text-center text-nowrap">
-                        {% for point in wo_item.item.bin.location.storage.access_point.all %}
-                            <button style="width: 100px" type='button' class='btn btn-info' onclick="call('{{ wo_item.item.bin.location.storage.storage_code }}','{{ wo_item.item.bin.location.mach_location_code }}','{{ wo_item.item.bin.location.storage.lift }}','{{ point.point_code }}')">{{ point.point_name }}</button>
+                        {% for point in wo_item.storage.access_point.all %}
+                            <button style="width: 100px" type='button' class='btn btn-info' onclick="call('{{ wo_item.storage.storage_code }}','{{ wo_item.location.mach_location_code }}','{{ wo_item.storage.lift }}','{{ point.point_code }}')">{{ point.point_name }}</button>
                         {% endfor %}
                     </td>
                 </tr>

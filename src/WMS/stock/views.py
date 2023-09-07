@@ -13,7 +13,7 @@ from stock.models import Storage_Type, Storage, Location, Bin, Item, WO
 def wo_search(request):
     if request.method == 'POST':
         wo_no = request.POST.get('wo_no')
-        items = WO.objects.filter(wo_no=wo_no).all().order_by('item__bin__bin_code', 'item__item_code')
+        items = WO.objects.filter(wo_no=wo_no).all().order_by('bin__bin_code', 'item_code')
         search_form = SearchForm(initial={'wo_no': wo_no})
     else:
         search_form = SearchForm()
@@ -37,10 +37,15 @@ def wo_import(request):
                         wo_del_list.append(wo_no)
 
                     item_code = str(sheet.cell(row=iRow, column=2).value)
-                    item = Item.objects.get(item_code=item_code)
+                    items = Item.objects.filter(item_code=item_code).all()
                     qty = sheet.cell(row=iRow, column=3).value
-                    wo = WO.objects.create(wo_no=wo_no, item=item, qty=qty, update_by=request.user)
-                    wo.save()
+                    for item in items:
+                        wo = WO.objects.create(wo_no=wo_no, item_code=item_code, desc=item.desc,
+                                               bin=item.bin,
+                                               location=item.bin.location,
+                                               storage=item.bin.location.storage,
+                                               qty=qty, update_by=request.user)
+                        wo.save()
                 except Exception as e:
                     print(e)
 
@@ -76,24 +81,24 @@ def excel_import(request):
                 wb = openpyxl.load_workbook(excel_file)
                 for sheet in wb.worksheets:
                     print(sheet)
-                    if sheet.title == "Storage":
-                        for iRow in range(2, sheet.max_row + 1):
-                            storage_code = sheet.cell(row=iRow, column=1).value
-                            type = sheet.cell(row=iRow, column=2).value
-                            type = Storage_Type.objects.get(type_code=type)
-                            desc = sheet.cell(row=iRow, column=3).value
-                            ip_addr = sheet.cell(row=iRow, column=4).value
-                            lift = sheet.cell(row=iRow, column=5).value
-                            access_point = sheet.cell(row=iRow, column=6).value
-                            enable = sheet.cell(row=iRow, column=7).value
-                            storage = Storage.objects.update_or_create(storage_code=storage_code,
-                                                                       defaults={'type': type, 'desc': desc,
-                                                                                 'ip_addr': ip_addr,
-                                                                                 'lift': lift,
-                                                                                 'access_point': access_point,
-                                                                                 'update_by': request.user,
-                                                                                 'enable': enable, })
-                    elif sheet.title == "Location":
+                    # if sheet.title == "Storage":
+                    #     for iRow in range(2, sheet.max_row + 1):
+                    #         storage_code = sheet.cell(row=iRow, column=1).value
+                    #         type = sheet.cell(row=iRow, column=2).value
+                    #         type = Storage_Type.objects.get(type_code=type)
+                    #         desc = sheet.cell(row=iRow, column=3).value
+                    #         ip_addr = sheet.cell(row=iRow, column=4).value
+                    #         lift = sheet.cell(row=iRow, column=5).value
+                    #         access_point = sheet.cell(row=iRow, column=6).value
+                    #         enable = sheet.cell(row=iRow, column=7).value
+                    #         storage = Storage.objects.update_or_create(storage_code=storage_code,
+                    #                                                    defaults={'type': type, 'desc': desc,
+                    #                                                              'ip_addr': ip_addr,
+                    #                                                              'lift': lift,
+                    #                                                              'access_point': access_point,
+                    #                                                              'update_by': request.user,
+                    #                                                              'enable': enable, })
+                    if sheet.title == "Location":
                         for iRow in range(2, sheet.max_row + 1):
                             storage = sheet.cell(row=iRow, column=1).value
                             storage = Storage.objects.get(storage_code=storage)
