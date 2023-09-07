@@ -70,23 +70,21 @@
         <table class="table table-striped table-bordered table-hover">
             <thead>
                 <tr class="text-center table-active">
-                    <th scope="col" class="text-center text-nowrap" style="width: 1%;"></th>
                     <th scope="col" class="text-center text-nowrap" style="width: 10%;">狀態</th>
                     <th scope="col" class="text-center text-nowrap" style="width: 20%;">料號</th>
                     <th scope="col" class="text-center text-nowrap" style="width: 20%;">說明</th>
                     <th scope="col" class="text-center text-nowrap" style="width: 10%;">數量</th>
                     <th scope="col" class="text-center text-nowrap" style="width: 20%;">儲格</th>
-                    <th scope="col" class="text-center text-nowrap" style="width: 19%;"></th>
+                    <th scope="col" class="text-center text-nowrap" style="width: 20%;"></th>
                 </tr>
             </thead>
             <tbody>
                 {% for wo_item in items %}
                 <tr class="data-row">
-                    <td>
-                        <button type="button" class="btn btn-light" data-toggle="modal" data-target=".bd-example-modal-lg" onclick="info('{{ wo_item.item.item_code }}', '{{ wo_item.item.desc }}')">...</button>
-                    </td>
                     <td><input type="checkbox" id="check_{{ wo_item.item.item_code }}" data-toggle="toggle" data-on="領" data-off="待" data-onstyle="primary" data-offstyle="light" onchange="item_check('{{ wo_item.wo_no }}','{{ wo_item.item.item_code }}')" {% if wo_item.checked %}checked{% else %}''{% endif %}></td>
-                    <td class="text-center text-nowrap">{{ wo_item.item.item_code }}</td>
+                    <td class="text-center text-nowrap">
+                        <a href="#" class="btn btn-light" data-toggle="modal" data-target=".bd-example-modal-lg" onclick="info('{{ wo_item.item.item_code }}', '{{ wo_item.item.desc }}')">{{ wo_item.item.item_code }}</a>
+                    </td>
                     <td class="text-center text-nowrap">{{ wo_item.item.desc }}</td>
                     <td class="text-center text-nowrap">{{ wo_item.qty }}</td>
                     <td class="text-center text-nowrap">{{ wo_item.item.bin.bin_name }}</td>
