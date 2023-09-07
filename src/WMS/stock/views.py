@@ -14,7 +14,9 @@ def wo_search(request):
     if request.method == 'POST':
         wo_no = request.POST.get('wo_no')
         items = WO.objects.filter(wo_no=wo_no).all().order_by('item__bin__bin_code', 'item__item_code')
-    search_form = SearchForm()
+        search_form = SearchForm(initial={'wo_no': wo_no})
+    else:
+        search_form = SearchForm()
     return render(request, 'stock/wo_search.html', locals())
 
 
