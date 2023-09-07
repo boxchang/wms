@@ -54,7 +54,8 @@
     }
 
     info = function(item_code, desc) {
-        $("#info").html(item_code+"<br><br>"+desc);
+        $("#item_code").html(item_code);
+        $("#desc").html(desc);
     }
 </script>
 {% endblock js %}
@@ -102,8 +103,9 @@
 
 <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
-    <div class="modal-content align-items-center justify-content-center" style="height: 600px">
-        <div id="info" class="h1"></div>
+    <div class="modal-content align-items-center justify-content-center" style="height: 600px;">
+        <div id="item_code" class="row" style="font-size: 8em;"></div>
+        <div id="desc" class="row h1"></div>
     </div>
   </div>
 </div>
