@@ -13,7 +13,7 @@ from stock.models import Storage_Type, Storage, Location, Bin, Item, WO
 def wo_search(request):
     if request.method == 'POST':
         wo_no = request.POST.get('wo_no')
-        items = WO.objects.filter(wo_no=wo_no).all()
+        items = WO.objects.filter(wo_no=wo_no).all().order_by('item__bin__bin_code', 'item__item_code')
     search_form = SearchForm()
     return render(request, 'stock/wo_search.html', locals())
 
@@ -59,7 +59,7 @@ def item_import(request):
                         desc = sheet.cell(row=iRow, column=2).value
                         bin = sheet.cell(row=iRow, column=7).value
                         bin = Bin.objects.get(bin_code=bin)
-                        item = Item.objects.update_or_create(item_code=item_code, defaults={'desc': desc, 'bin': bin, 'update_by': request.user})
+                        item = Item.objects.update_or_create(item_code=item_code, bin=bin, defaults={'desc': desc, 'update_by': request.user})
                 except Exception as e:
                     print(e)
 

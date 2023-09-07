@@ -1,5 +1,10 @@
 from django.contrib import admin
-from stock.models import Storage_Type, Storage, Location, Bin
+from stock.models import Storage_Type, Storage, Location, Bin, Access_Point
+
+
+@admin.register(Access_Point)
+class Access_PointAdmin(admin.ModelAdmin):
+    list_display = ('point_code', 'point_name', 'desc')
 
 
 @admin.register(Storage_Type)
@@ -9,7 +14,8 @@ class Storage_TypeAdmin(admin.ModelAdmin):
 
 @admin.register(Storage)
 class StorageAdmin(admin.ModelAdmin):
-    list_display = ('storage_code', 'type', 'desc', 'ip_addr', 'lift', 'access_point', 'enable')
+    list_display = ('storage_code', 'type', 'desc', 'ip_addr', 'lift', 'enable')
+    filter_horizontal = ('access_point',)
 
 
 @admin.register(Location)

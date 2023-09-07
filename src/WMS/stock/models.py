@@ -1,5 +1,17 @@
 from django.db import models
 from django.conf import settings
+from django.utils.html import format_html
+
+class Access_Point(models.Model):
+    point_code = models.CharField(max_length=6, primary_key=True)
+    point_name = models.CharField(max_length=50, blank=False, null=False)
+    desc = models.CharField(max_length=200, blank=True, null=True)
+    update_at = models.DateTimeField(auto_now=True, null=True)
+    update_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING,
+                                  related_name='access_point_update_by')
+
+    def __str__(self):
+        return self.point_name
 
 
 class Storage_Type(models.Model):
@@ -19,7 +31,7 @@ class Storage(models.Model):
     desc = models.CharField(max_length=200, blank=True, null=True)
     ip_addr = models.CharField(max_length=15, blank=True, null=True)
     lift = models.CharField(max_length=1, blank=True, null=True)
-    access_point = models.CharField(max_length=1, blank=True, null=True)
+    access_point = models.ManyToManyField(Access_Point)
     update_at = models.DateTimeField(auto_now=True, null=True)
     update_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING,
                                   related_name='storage_update_by')
@@ -59,7 +71,7 @@ class Bin(models.Model):
 
 
 class Item(models.Model):
-    item_code = models.CharField(max_length=10, primary_key=True)
+    item_code = models.CharField(max_length=10)
     desc = models.CharField(max_length=200, blank=True, null=True)
     bin = models.ForeignKey(Bin, related_name='item_bin', on_delete=models.DO_NOTHING)
     update_at = models.DateTimeField(auto_now=True, null=True)

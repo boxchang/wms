@@ -83,7 +83,11 @@
                     <td class="text-center text-nowrap">{{ wo_item.item.desc }}</td>
                     <td class="text-center text-nowrap">{{ wo_item.qty }}</td>
                     <td class="text-center text-nowrap">{{ wo_item.item.bin.bin_name }}</td>
-                    <td class="text-center text-nowrap"><button type='button' class='btn btn-info' onclick="call('{{ wo_item.item.bin.location.storage.storage_code }}','{{ wo_item.item.bin.location.mach_location_code }}','{{ wo_item.item.bin.location.storage.lift }}','{{ wo_item.item.bin.location.storage.access_point }}')">叫車</button></td>
+                    <td class="text-center text-nowrap">
+                        {% for point in wo_item.item.bin.location.storage.access_point.all %}
+                            <button style="width: 100px" type='button' class='btn btn-info' onclick="call('{{ wo_item.item.bin.location.storage.storage_code }}','{{ wo_item.item.bin.location.mach_location_code }}','{{ wo_item.item.bin.location.storage.lift }}','{{ point.point_code }}')">{{ point.point_name }}</button>
+                        {% endfor %}
+                    </td>
                 </tr>
                 {% endfor %}
         </table>
