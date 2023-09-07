@@ -116,22 +116,6 @@
     <div style="width:55px;background-color: #F7F7F7;border-right:1px solid #CCC;height:auto;overflow-y:auto;">
         {% if user.is_authenticated %}
         <div class="box-nav">
-            {% if perms.users.perm_pms %}
-            <a class="box-nav-btn" href="#" role="button" data-bs-toggle="tooltip" data-bs-placement="right" title="{% trans 'Project Management System' %}">
-                <i class="fa fa-tasks"></i>
-            </a>
-            {% endif %}
-            {% if perms.users.perm_ams %}
-            <a class="box-nav-btn" href="{% url 'stock_search' %}" role="button" data-bs-toggle="tooltip" data-bs-placement="right" title="{% trans 'Asset Management System' %}">
-                <i class="fa fa-book"></i>
-            </a>
-            {% endif %}
-            <a class="box-nav-btn" href="#" role="button" data-bs-toggle="tooltip" data-bs-placement="right" title="{% trans 'IT Equipment Borrow Application' %}">
-                <i class="fas fa-check-square"></i>
-            </a>
-            <a class="box-nav-btn" href="#" role="button" data-bs-toggle="tooltip" data-bs-placement="right" title="{% trans 'General Supply Application' %}">
-                <i class="fas fa-pen"></i>
-            </a>
             <a class="box-nav-btn" href="{% url 'user_info' %}" role="button" data-bs-toggle="tooltip" data-bs-placement="right" title="{% trans 'Personal Setting' %}">
                 <i class="fas fa-cog"></i>
             </a>
