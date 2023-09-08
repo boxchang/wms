@@ -13,7 +13,7 @@ from stock.models import Storage_Type, Storage, Location, Bin, Item, WO
 def wo_search(request):
     if request.method == 'POST':
         wo_no = request.POST.get('wo_no')
-        items = WO.objects.filter(wo_no=wo_no).all().order_by('bin__bin_code', 'item_code')
+        items = WO.objects.filter(wo_no=wo_no).all().order_by('item__item_code')
         search_form = SearchForm(initial={'wo_no': wo_no})
     else:
         search_form = SearchForm()
@@ -37,15 +37,11 @@ def wo_import(request):
                         wo_del_list.append(wo_no)
 
                     item_code = str(sheet.cell(row=iRow, column=2).value)
-                    items = Item.objects.filter(item_code=item_code).all()
+                    item = Item.objects.get(item_code=item_code)
                     qty = sheet.cell(row=iRow, column=3).value
-                    for item in items:
-                        wo = WO.objects.create(wo_no=wo_no, item_code=item_code, desc=item.desc,
-                                               bin=item.bin,
-                                               location=item.bin.location,
-                                               storage=item.bin.location.storage,
-                                               qty=qty, update_by=request.user)
-                        wo.save()
+                    wo = WO.objects.create(wo_no=wo_no, item=item,
+                                           qty=qty, update_by=request.user)
+
                 except Exception as e:
                     print(e)
 
@@ -64,9 +60,13 @@ def item_import(request):
                     item_code = str(sheet.cell(row=iRow, column=1).value)
                     if len(item_code) == 10:
                         desc = sheet.cell(row=iRow, column=2).value
-                        bin = sheet.cell(row=iRow, column=7).value
-                        bin = Bin.objects.get(bin_code=bin)
-                        item = Item.objects.update_or_create(item_code=item_code, bin=bin, defaults={'desc': desc, 'update_by': request.user})
+                        new_bin = sheet.cell(row=iRow, column=7).value
+                        new_bin = Bin.objects.get(bin_code=new_bin)
+                        item = Item.objects.update_or_create(item_code=item_code, defaults={'desc': desc, 'update_by': request.user})
+                        item = Item.objects.get(item_code=item_code)
+                        bins = item.bin.all()
+                        if new_bin not in bins:
+                            item.bin.add(new_bin)
                 except Exception as e:
                     print(e)
 
@@ -179,11 +179,9 @@ def call_location(request):
 def call_wo_item_check(request):
     if request.method == 'POST':
         try:
-            wo_no = request.POST.get('wo_no')
-            item_code = request.POST.get('item_code')
+            pk = request.POST.get('pk')
             item_checked = request.POST.get('item_checked')
-            item = Item.objects.get(item_code=item_code)
-            wo_item = WO.objects.filter(wo_no=wo_no, item=item).first()
+            wo_item = WO.objects.get(pk=pk)
             wo_item.checked = bool(item_checked)
             wo_item.save()
             result = "DONE"

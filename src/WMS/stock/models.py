@@ -31,7 +31,7 @@ class Storage(models.Model):
     desc = models.CharField(max_length=200, blank=True, null=True)
     ip_addr = models.CharField(max_length=15, blank=True, null=True)
     lift = models.CharField(max_length=1, blank=True, null=True)
-    access_point = models.ManyToManyField(Access_Point)
+    access_point = models.ManyToManyField(Access_Point, blank=True, null=True)
     update_at = models.DateTimeField(auto_now=True, null=True)
     update_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING,
                                   related_name='storage_update_by')
@@ -71,9 +71,9 @@ class Bin(models.Model):
 
 
 class Item(models.Model):
-    item_code = models.CharField(max_length=10)
+    item_code = models.CharField(max_length=10, primary_key=True)
     desc = models.CharField(max_length=200, blank=True, null=True)
-    bin = models.ForeignKey(Bin, related_name='item_bin', on_delete=models.DO_NOTHING)
+    bin = models.ManyToManyField(Bin)
     update_at = models.DateTimeField(auto_now=True, null=True)
     update_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING,
                                   related_name='item_update_by')
@@ -82,13 +82,18 @@ class Item(models.Model):
         return self.desc
 
 
+class Item_attachment(models.Model):
+    item = models.ForeignKey('Item', related_name='item_pics', on_delete=models.CASCADE)
+    files = models.FileField(upload_to='uploads/picture/')
+    description = models.CharField(max_length=50, blank=True)
+    create_at = models.DateTimeField(auto_now_add=True, editable=True)  # 建立日期
+    create_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING,
+                                  related_name='pic_create_by')  # 建立者
+
+
 class WO(models.Model):
     wo_no = models.CharField(max_length=10, blank=False, null=False)
-    item_code = models.CharField(max_length=10)
-    desc = models.CharField(max_length=200, blank=True, null=True)
-    bin = models.ForeignKey(Bin, related_name='wo_bin', on_delete=models.DO_NOTHING)
-    location = models.ForeignKey(Location, related_name='wo_location', on_delete=models.DO_NOTHING)
-    storage = models.ForeignKey(Storage, related_name='wo_storage', on_delete=models.DO_NOTHING)
+    item = models.ForeignKey('Item', related_name='wo_item', on_delete=models.DO_NOTHING)
     qty = models.IntegerField(default=0)
     checked = models.BooleanField(default=False)
     update_at = models.DateTimeField(auto_now=True, null=True)
