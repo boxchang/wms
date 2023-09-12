@@ -1,3 +1,5 @@
+import json
+
 import openpyxl
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
@@ -182,7 +184,7 @@ def call_wo_item_check(request):
             pk = request.POST.get('pk')
             item_checked = request.POST.get('item_checked')
             wo_item = WO.objects.get(pk=pk)
-            wo_item.checked = bool(item_checked)
+            wo_item.checked = json.loads(item_checked)
             wo_item.save()
             result = "DONE"
         except Exception as e:
