@@ -18,7 +18,8 @@ def wo_search(request):
         items = WO.objects.filter(wo_no=wo_no).all().order_by('item__item_code')
         for item in items:
             print(item.item.item_code+"   "+str(item.checked))
-        search_form = SearchForm(initial={'wo_no': wo_no})
+        #search_form = SearchForm(initial={'wo_no': wo_no})
+        search_form = SearchForm()
     else:
         search_form = SearchForm()
     return render(request, 'stock/wo_search.html', locals())
