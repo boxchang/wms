@@ -14,7 +14,7 @@ from stock.models import Storage_Type, Storage, Location, Bin, Item, WO
 @login_required
 def wo_search(request):
     if request.method == 'POST':
-        wo_no = request.POST.get('wo_no')
+        wo_no = str(request.POST.get('wo_no')).strip()
         items = WO.objects.filter(wo_no=wo_no).all().order_by('item__item_code')
         for item in items:
             print(item.item.item_code+"   "+str(item.checked))
@@ -58,9 +58,11 @@ def wo_import(request):
                     item_code = str(sheet.cell(row=iRow, column=item_index).value)
                     item = Item.objects.get(item_code=item_code)
                     qty = sheet.cell(row=iRow, column=qty_index).value
+
                     if mvt == "311" and loc == "0030":
                         wo = WO.objects.create(wo_no=wo_no, item=item,
                                                qty=qty, update_by=request.user)
+                        print("{wo_no}  {item_code}".format(wo_no=wo_no, item_code=item_code))
 
                 except Exception as e:
                     print(e)
