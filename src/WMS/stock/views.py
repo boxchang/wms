@@ -16,6 +16,8 @@ def wo_search(request):
     if request.method == 'POST':
         wo_no = request.POST.get('wo_no')
         items = WO.objects.filter(wo_no=wo_no).all().order_by('item__item_code')
+        for item in items:
+            print(item.item.item_code+"   "+str(item.checked))
         search_form = SearchForm(initial={'wo_no': wo_no})
     else:
         search_form = SearchForm()
@@ -30,19 +32,34 @@ def wo_import(request):
         if excel_file:
             wb = openpyxl.load_workbook(excel_file)
             sheet = wb.worksheets[0]
+            for index in range(1, 30):
+                if sheet.cell(row=1, column=index).value == "物料":
+                    item_index = index
+                elif sheet.cell(row=1, column=index).value == "MvT":
+                    mvt_index = index
+                elif sheet.cell(row=1, column=index).value == "表頭內文":
+                    wo_index = index
+                elif sheet.cell(row=1, column=index).value == "SLoc":
+                    loc_index = index
+                elif sheet.cell(row=1, column=index).value == "數量":
+                    qty_index = index
+
+
             for iRow in range(2, sheet.max_row + 1):
                 try:
-                    wo_no = sheet.cell(row=iRow, column=1).value
+                    wo_no = sheet.cell(row=iRow, column=wo_index).value
                     wo = WO.objects.filter(wo_no=wo_no)
                     if wo and wo_no not in wo_del_list:
                         wo.delete()
                         wo_del_list.append(wo_no)
-
-                    item_code = str(sheet.cell(row=iRow, column=2).value)
+                    mvt = str(sheet.cell(row=iRow, column=mvt_index).value)
+                    loc = str(sheet.cell(row=iRow, column=loc_index).value)
+                    item_code = str(sheet.cell(row=iRow, column=item_index).value)
                     item = Item.objects.get(item_code=item_code)
-                    qty = sheet.cell(row=iRow, column=3).value
-                    wo = WO.objects.create(wo_no=wo_no, item=item,
-                                           qty=qty, update_by=request.user)
+                    qty = sheet.cell(row=iRow, column=qty_index).value
+                    if mvt == "311" and loc == "0030":
+                        wo = WO.objects.create(wo_no=wo_no, item=item,
+                                               qty=qty, update_by=request.user)
 
                 except Exception as e:
                     print(e)

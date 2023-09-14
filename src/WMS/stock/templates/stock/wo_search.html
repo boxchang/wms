@@ -14,7 +14,7 @@
 </style>
 {% endblock css %}
 {% block js %}
-<link href="https://www.cssscript.com/demo/checkbox-toggle-switchy/toggle-switchy.css" rel="stylesheet">
+<link href="{% static '/base/css/toggle-switchy.css' %}" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
 <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.16.0/dist/bootstrap-table.min.css">
@@ -62,7 +62,7 @@
 </script>
 {% endblock js %}
 {% block ready %}
-$("#wo_search").bootstrapTable();
+
 {% endblock ready %}
 {% block content %}
 <div class="p-3">
@@ -87,7 +87,7 @@ $("#wo_search").bootstrapTable();
             <tr class="data-row">
                 <td>
                     <label class="toggle-switchy" for="check_{{ wo_item.pk }}" data-size="lg">
-                      <input type="checkbox" id="check_{{ wo_item.pk }}" onchange="item_check('{{ wo_item.pk }}')" {% if wo_item.checked %}''{% else %}checked{% endif %}>
+                      <input type="checkbox" id="check_{{ wo_item.pk }}" onchange="item_check('{{ wo_item.pk }}')" {% if wo_item.checked %}checked{% else %}''{% endif %}>
                       <span class="toggle">
                         <span class="switch"></span>
                       </span>
